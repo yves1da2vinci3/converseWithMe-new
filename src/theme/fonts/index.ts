@@ -1,3 +1,4 @@
+import { Inter_400Regular } from "@expo-google-fonts/inter";
 import { Platform } from "react-native";
 import { MD3LightTheme } from "react-native-paper";
 export const fontConfig = {
@@ -15,7 +16,7 @@ export const fontConfig = {
     fontSize: 20,
   },
   default: {
-  "fontFamily": "FontFamily",
+  "fontFamily": "Inter_400Regular",
   "fontWeight": "400",
   "letterSpacing": 0,
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Login from '../../screens/auth/Login'
-import Home from '../../screens/auth/Home'
+import Home from '../../screens/auth/home/Home'
 import Register from '../../screens/auth/Register'
 
 const AuthStack = () => {
