@@ -1,8 +1,11 @@
 import { useColorScheme } from "react-native";
-import { MD3LightTheme, MD3DarkTheme } from "react-native-paper";
-import lightTheme from "./colors/lightTheme.json";
-import darkTheme from "./colors/darkTheme.json";
+import {
+  MD3LightTheme,
+  MD3DarkTheme,
+  configureFonts,
+} from "react-native-paper";
 import { Colors } from "./colors/constants";
+import { fontConfig } from "./fonts";
 
 const useConfigTheme = () => {
   const colorScheme = useColorScheme();
@@ -10,6 +13,7 @@ const useConfigTheme = () => {
     colorScheme === "dark"
       ? {
           ...MD3DarkTheme,
+          fonts: configureFonts({ config: fontConfig }),
           colors: {
             ...MD3DarkTheme.colors,
             primary: Colors.primary,
@@ -20,6 +24,7 @@ const useConfigTheme = () => {
         }
       : {
           ...MD3LightTheme,
+          fonts: configureFonts({ config: fontConfig }),
           colors: {
             ...MD3DarkTheme.colors,
             primary: Colors.primary,
