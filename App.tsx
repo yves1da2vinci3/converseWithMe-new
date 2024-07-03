@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import { StatusBar } from "expo-status-bar";
 import { PaperProvider } from "react-native-paper";
 import useConfigTheme from "./src/theme";

@@ -1,26 +1,18 @@
-import { StyleSheet, View } from "react-native";
-import { Button, useTheme } from "react-native-paper";
-export default function AppNavigator() {
-  const theme = useTheme();
+import { NavigationContainer } from "@react-navigation/native";
+import AuthStack from "./src/navigation/stacks/AuthStack";
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
+export default function AppNavigator() {
+  const Stack = createNativeStackNavigator();
   return (
-    <View style={styles.container}>
-      <Button
-        buttonColor={theme.colors.primary}
-        icon="camera"
-        mode="contained"
-        onPress={() => console.log("Pressed")}
-      >
-        Press me
-      </Button>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="auth"
+          component={AuthStack}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 30,
-  },
-});
