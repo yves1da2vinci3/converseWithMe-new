@@ -1,42 +1,61 @@
-import { View, Image } from "react-native";
-import React from "react";
-import { Button, Text } from "react-native-paper";
-import { homeStyleSheet } from "./stylesheet";
-import images from "../../../../assets/images/images";
-import { hp, wp } from "../../../utils/responsive";
-import { globalStyleSheet } from "../../../styles/stylesheet";
-import CustomButton from "../../../components/CustomButton";
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React from 'react';
+import { Image, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import images from '../../../../assets/images/images';
+import CustomButton from '../../../components/CustomButton';
+import { globalStyleSheet } from '../../../styles/stylesheet';
+import { hp, wp } from '../../../utils/responsive';
+import { homeStyleSheet } from './stylesheet';
+
+type RootStackParamList = {
+  login: undefined;
+  register: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const Home = () => {
+  const navigate = useNavigation<NavigationProp>();
+
   return (
     <View style={homeStyleSheet.container}>
       <Image
-        style={{ height: hp("50%"), width: wp("90%") }}
+        style={{ height: hp('40%'), width: wp('90%') }}
         source={images.HOME_AUTH}
       />
       <View
         style={{
-          alignSelf: "flex-start",
-          flexDirection: "row",
-          justifyContent: "flex-start",
+          alignSelf: 'flex-start',
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
         }}
       >
         <Text
-          variant="headlineMedium"
-          style={[globalStyleSheet.blacColor, homeStyleSheet.text]}
+          style={[
+            globalStyleSheet.blacColor,
+            homeStyleSheet.text,
+            { fontSize: 24, fontWeight: 'bold' },
+          ]}
         >
           ConverseWith
         </Text>
         <Text
-          variant="headlineMedium"
-          style={[homeStyleSheet.text, homeStyleSheet.colorGold]}
+          style={[
+            homeStyleSheet.text,
+            homeStyleSheet.colorGold,
+            { fontSize: 24, fontWeight: 'bold' },
+          ]}
         >
           Me
         </Text>
       </View>
       <Text
-        variant="titleLarge"
-        style={[globalStyleSheet.blacColor, { fontFamily: "Inter_500Medium" }]}
+        style={[
+          globalStyleSheet.blacColor,
+          { fontFamily: 'Inter_500Medium', fontSize: 20 },
+        ]}
       >
         l'application pour discuter ici et ailleurs
       </Text>
@@ -50,11 +69,22 @@ const Home = () => {
       </Text>
       {/* Button Group */}
       <View
-        style={{ width: wp("90%"), rowGap: hp("1%"), marginVertical: hp("2%") }}
+        style={{ width: wp('90%'), rowGap: hp('1%'), marginVertical: hp('2%') }}
       >
-        <CustomButton mode="contained">Login</CustomButton>
+        <CustomButton
+          onPress={() => navigate.navigate('login')}
+          mode='contained'
+        >
+          Login
+        </CustomButton>
 
-        <CustomButton mode="outlined"> register </CustomButton>
+        <CustomButton
+          onPress={() => navigate.navigate('register')}
+          mode='outlined'
+        >
+          {' '}
+          register{' '}
+        </CustomButton>
       </View>
     </View>
   );

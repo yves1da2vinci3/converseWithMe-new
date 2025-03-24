@@ -1,6 +1,5 @@
-import { Inter_400Regular } from "@expo-google-fonts/inter";
-import { Platform } from "react-native";
-import { MD3LightTheme } from "react-native-paper";
+import { Platform } from 'react-native';
+import { MD3LightTheme } from 'react-native-paper';
 export const fontConfig = {
   ...MD3LightTheme.fonts,
   customVariant: {
@@ -13,12 +12,11 @@ export const fontConfig = {
     fontWeight: '400',
     letterSpacing: 0.5,
     lineHeight: 22,
-    fontSize: 20,
+    fontSize: 16,
   },
   default: {
-  "fontFamily": "Inter_400Regular",
-  "fontWeight": "400",
-  "letterSpacing": 0,
-}
+    fontFamily: 'Inter_400Regular',
+    fontWeight: '400',
+    letterSpacing: 0,
+  },
 };
-

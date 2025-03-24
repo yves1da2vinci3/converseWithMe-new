@@ -6,7 +6,7 @@ export const homeStyleSheet = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
     padding: wp("5%"),
   },
