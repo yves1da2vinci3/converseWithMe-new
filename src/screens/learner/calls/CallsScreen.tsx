@@ -1,14 +1,18 @@
-import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import {
-  Alert,
-  FlatList,
-  StyleSheet,
+  Avatar,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  IconButton,
+  Searchbar,
+  SegmentedButtons,
   Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CallModeInterface from '../../../components/calls/CallModeInterface';
 
@@ -31,12 +35,20 @@ type Tutor = {
   available: boolean;
 };
 
+type CallsStackParamList = {
+  calls: undefined;
+  CallDetail: {
+    tutorId: string;
+  };
+};
+
 type CallsScreenProps = {
-  navigation: NativeStackNavigationProp<any, 'calls'>;
+  navigation: NativeStackNavigationProp<CallsStackParamList, 'calls'>;
 };
 
 // Données statiques pour les langues et tuteurs
 const languages: Language[] = [
+  { id: 'all', name: 'Toutes', flag: '🌍' },
   { id: 'english', name: 'Anglais', flag: '🇬🇧' },
   { id: 'spanish', name: 'Espagnol', flag: '🇪🇸' },
   { id: 'french', name: 'Français', flag: '🇫🇷' },
@@ -47,8 +59,8 @@ const languages: Language[] = [
 const tutors: Tutor[] = [
   {
     id: 'sarah',
-    name: 'Sarah',
-    avatar: 'S',
+    name: 'Sarah Johnson',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
     language: 'Anglais (UK)',
     flag: '🇬🇧',
     level: 'Tous niveaux',
@@ -58,8 +70,8 @@ const tutors: Tutor[] = [
   },
   {
     id: 'miguel',
-    name: 'Miguel',
-    avatar: 'M',
+    name: 'Miguel Rodriguez',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
     language: 'Espagnol',
     flag: '🇪🇸',
     level: 'Débutant, Intermédiaire',
@@ -69,8 +81,8 @@ const tutors: Tutor[] = [
   },
   {
     id: 'lucie',
-    name: 'Lucie',
-    avatar: 'L',
+    name: 'Lucie Dubois',
+    avatar: 'https://randomuser.me/api/portraits/women/63.jpg',
     language: 'Français',
     flag: '🇫🇷',
     level: 'Intermédiaire, Avancé',
@@ -80,8 +92,8 @@ const tutors: Tutor[] = [
   },
   {
     id: 'hans',
-    name: 'Hans',
-    avatar: 'H',
+    name: 'Hans Mueller',
+    avatar: 'https://randomuser.me/api/portraits/men/62.jpg',
     language: 'Allemand',
     flag: '🇩🇪',
     level: 'Tous niveaux',
@@ -91,8 +103,8 @@ const tutors: Tutor[] = [
   },
   {
     id: 'maria',
-    name: 'Maria',
-    avatar: 'M',
+    name: 'Maria Rossi',
+    avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
     language: 'Italien',
     flag: '🇮🇹',
     level: 'Débutant, Intermédiaire',
@@ -103,419 +115,283 @@ const tutors: Tutor[] = [
 ];
 
 const CallsScreen = ({ navigation }: CallsScreenProps) => {
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    languages[0]
-  );
-  const [callType, setCallType] = useState<'audio' | 'video'>('audio');
-  const [activeCall, setActiveCall] = useState<Tutor | null>(null);
+  const theme = useTheme();
+  const [selectedLanguage, setSelectedLanguage] = useState('all');
+  const [inCallMode, setInCallMode] = useState(false);
+  const [callType, setCallType] = useState<'audio' | 'video'>('video');
+  const [currentTutor, setCurrentTutor] = useState<Tutor | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterValue, setFilterValue] = useState('all');
 
   const startCall = (tutor: Tutor, type: 'audio' | 'video') => {
-    setActiveCall(tutor);
+    setCurrentTutor(tutor);
+    setCallType(type);
+    setInCallMode(true);
   };
 
   const endCall = () => {
-    setActiveCall(null);
-    Alert.alert(
-      'Appel terminé',
-      'La conversation a été enregistrée dans votre historique.'
-    );
+    setInCallMode(false);
+    setCurrentTutor(null);
   };
 
-  // Render call interface if active call exists
-  if (activeCall) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <View style={styles.backButtonContainer}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => {
-                Alert.alert(
-                  "Terminer l'appel",
-                  'Êtes-vous sûr de vouloir quitter cet appel ?',
-                  [
-                    {
-                      text: 'Annuler',
-                      style: 'cancel',
-                    },
-                    {
-                      text: 'Terminer',
-                      onPress: endCall,
-                    },
-                  ]
-                );
-              }}
-            >
-              <Ionicons name='arrow-back' size={24} color='#000' />
-              <Text style={styles.backButtonText}>Retour</Text>
-            </TouchableOpacity>
-          </View>
+  const filteredTutors = tutors.filter(
+    (tutor) =>
+      (selectedLanguage === 'all' ||
+        tutor.language.toLowerCase().includes(selectedLanguage)) &&
+      (searchQuery === '' ||
+        tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tutor.language.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (filterValue === 'all' ||
+        (filterValue === 'available' && tutor.available))
+  );
 
-          <View style={styles.callContainer}>
-            <CallModeInterface
-              tutor={activeCall}
-              callType={callType}
-              onEndCall={endCall}
-              language={selectedLanguage.name}
-            />
+  const navigateToTutorDetail = (tutorId: string) => {
+    navigation.navigate('CallDetail', { tutorId });
+  };
+
+  const renderLanguageItem = ({ item }: { item: Language }) => (
+    <Button
+      mode={selectedLanguage === item.id ? 'contained' : 'outlined'}
+      style={styles.languageButton}
+      contentStyle={styles.languageButtonContent}
+      onPress={() => setSelectedLanguage(item.id)}
+    >
+      {item.flag} {item.name}
+    </Button>
+  );
+
+  const renderTutorCard = ({ item }: { item: Tutor }) => (
+    <Card
+      style={[styles.tutorCard, !item.available && styles.unavailableTutorCard]}
+      onPress={() => navigateToTutorDetail(item.id)}
+    >
+      <Card.Content>
+        <View style={styles.tutorHeader}>
+          <Avatar.Image source={{ uri: item.avatar }} size={60} />
+          <View style={styles.tutorInfo}>
+            <Text variant='titleMedium' style={styles.tutorName}>
+              {item.name}
+            </Text>
+            <Text variant='bodyMedium'>
+              {item.flag} {item.language}
+            </Text>
+            <View style={styles.ratingContainer}>
+              <IconButton
+                icon='star'
+                size={16}
+                iconColor={theme.colors.primary}
+                style={styles.starIcon}
+              />
+              <Text>{item.rating}</Text>
+            </View>
           </View>
         </View>
-      </SafeAreaView>
-    );
-  }
+
+        <Divider style={styles.divider} />
+
+        <Text variant='bodySmall' style={styles.levelText}>
+          {item.level}
+        </Text>
+
+        <View style={styles.specialtiesContainer}>
+          {item.specialties.map((specialty, index) => (
+            <Chip key={index} style={styles.specialtyChip}>
+              {specialty}
+            </Chip>
+          ))}
+        </View>
+
+        <View style={styles.actionsContainer}>
+          <Button
+            mode='outlined'
+            icon='phone'
+            style={styles.callButton}
+            onPress={() => startCall(item, 'audio')}
+            disabled={!item.available}
+          >
+            Audio
+          </Button>
+          <Button
+            mode='contained'
+            icon='video'
+            style={styles.callButton}
+            onPress={() => startCall(item, 'video')}
+            disabled={!item.available}
+          >
+            Vidéo
+          </Button>
+        </View>
+      </Card.Content>
+    </Card>
+  );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Appels</Text>
-          <Text style={styles.subtitle}>
-            Pratiquez avec nos tuteurs IA natifs pour améliorer votre
-            prononciation et votre fluidité
-          </Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      {inCallMode && currentTutor ? (
+        <CallModeInterface
+          tutor={currentTutor}
+          callType={callType}
+          onEndCall={endCall}
+          language={currentTutor.language}
+        />
+      ) : (
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text variant='headlineMedium' style={styles.title}>
+              Appels
+            </Text>
+            <IconButton icon='cog-outline' size={24} />
+          </View>
 
-        <View style={styles.languageSelector}>
-          <Text style={styles.sectionTitle}>Choisissez une langue</Text>
+          <Searchbar
+            placeholder='Rechercher un tuteur ou une langue'
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            style={styles.searchBar}
+          />
+
+          <View style={styles.filterContainer}>
+            <SegmentedButtons
+              value={filterValue}
+              onValueChange={setFilterValue}
+              buttons={[
+                {
+                  value: 'all',
+                  label: 'Tous',
+                },
+                {
+                  value: 'available',
+                  label: 'Disponibles',
+                },
+              ]}
+              style={styles.filterButtons}
+            />
+          </View>
+
+          <Text variant='titleMedium' style={styles.sectionTitle}>
+            Langues
+          </Text>
+
           <FlatList
             data={languages}
+            renderItem={renderLanguageItem}
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[
-                  styles.languageItem,
-                  selectedLanguage.id === item.id && styles.selectedLanguage,
-                ]}
-                onPress={() => setSelectedLanguage(item)}
-              >
-                <Text style={styles.languageFlag}>{item.flag}</Text>
-                <Text
-                  style={[
-                    styles.languageName,
-                    selectedLanguage.id === item.id &&
-                      styles.selectedLanguageText,
-                  ]}
-                >
-                  {item.name}
-                </Text>
-              </TouchableOpacity>
-            )}
+            contentContainerStyle={styles.languageList}
           />
-        </View>
 
-        <View style={styles.callTypeSelector}>
-          <Text style={styles.sectionTitle}>Type d'appel</Text>
-          <View style={styles.callTypeButtons}>
-            <TouchableOpacity
-              style={[
-                styles.callTypeButton,
-                callType === 'audio' && styles.selectedCallType,
-              ]}
-              onPress={() => setCallType('audio')}
-            >
-              <Ionicons
-                name='call'
-                size={24}
-                color={callType === 'audio' ? '#fff' : '#4F46E5'}
-              />
-              <Text
-                style={[
-                  styles.callTypeText,
-                  callType === 'audio' && styles.selectedCallTypeText,
-                ]}
-              >
-                Audio
-              </Text>
-            </TouchableOpacity>
+          <Text variant='titleMedium' style={styles.sectionTitle}>
+            Tuteurs disponibles
+          </Text>
 
-            <TouchableOpacity
-              style={[
-                styles.callTypeButton,
-                callType === 'video' && styles.selectedCallType,
-              ]}
-              onPress={() => setCallType('video')}
-            >
-              <Ionicons
-                name='videocam'
-                size={24}
-                color={callType === 'video' ? '#fff' : '#4F46E5'}
-              />
-              <Text
-                style={[
-                  styles.callTypeText,
-                  callType === 'video' && styles.selectedCallTypeText,
-                ]}
-              >
-                Vidéo
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.tutorsSection}>
-          <Text style={styles.sectionTitle}>Tuteurs disponibles</Text>
           <FlatList
-            data={tutors.filter((tutor) => tutor.available)}
+            data={filteredTutors}
+            renderItem={renderTutorCard}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TutorCard
-                tutor={item}
-                callType={callType}
-                onCallStart={() => startCall(item, callType)}
-              />
-            )}
+            contentContainerStyle={styles.tutorsList}
+            showsVerticalScrollIndicator={false}
           />
         </View>
-      </View>
+      )}
     </SafeAreaView>
   );
 };
 
-type TutorCardProps = {
-  tutor: Tutor;
-  callType: 'audio' | 'video';
-  onCallStart: () => void;
-};
-
-const TutorCard = ({ tutor, callType, onCallStart }: TutorCardProps) => {
-  return (
-    <View style={styles.tutorCard}>
-      <View style={styles.tutorInfo}>
-        <View style={styles.tutorAvatar}>
-          <Text style={styles.tutorAvatarText}>{tutor.avatar}</Text>
-        </View>
-        <View style={styles.tutorDetails}>
-          <View style={styles.tutorNameRow}>
-            <Text style={styles.tutorName}>{tutor.name}</Text>
-            <Text style={styles.tutorFlag}>{tutor.flag}</Text>
-          </View>
-          <Text style={styles.tutorLanguage}>{tutor.language}</Text>
-          <Text style={styles.tutorLevel}>{tutor.level}</Text>
-          <View style={styles.tutorSpecialties}>
-            {tutor.specialties.map((specialty, index) => (
-              <View key={index} style={styles.specialtyTag}>
-                <Text style={styles.specialtyText}>{specialty}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      </View>
-      <View style={styles.tutorActions}>
-        <TouchableOpacity style={styles.callButton} onPress={onCallStart}>
-          <Ionicons
-            name={callType === 'audio' ? 'call' : 'videocam'}
-            size={20}
-            color='#fff'
-          />
-          <Text style={styles.callButtonText}>
-            {callType === 'audio' ? 'Appel audio' : 'Appel vidéo'}
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.ratingContainer}>
-          <Ionicons name='star' size={16} color='#FFCA28' />
-          <Text style={styles.ratingText}>{tutor.rating.toFixed(1)}</Text>
-        </View>
-      </View>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  content: {
     flex: 1,
     padding: 16,
   },
   header: {
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    lineHeight: 22,
-  },
-  languageSelector: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  languageItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginRight: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#eaeaea',
-  },
-  selectedLanguage: {
-    backgroundColor: '#4F46E5',
-    borderColor: '#4F46E5',
-  },
-  languageFlag: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  languageName: {
-    fontSize: 14,
-    color: '#333',
-  },
-  selectedLanguageText: {
-    color: '#fff',
-  },
-  callTypeSelector: {
-    marginBottom: 20,
-  },
-  callTypeButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  callTypeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#4F46E5',
-    gap: 8,
-  },
-  selectedCallType: {
-    backgroundColor: '#4F46E5',
-  },
-  callTypeText: {
-    fontSize: 16,
-    color: '#4F46E5',
-  },
-  selectedCallTypeText: {
-    color: '#fff',
-  },
-  tutorsSection: {
-    flex: 1,
-  },
-  tutorCard: {
-    borderWidth: 1,
-    borderColor: '#eaeaea',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  tutorInfo: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  tutorAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  tutorAvatarText: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  tutorDetails: {
-    flex: 1,
-  },
-  tutorNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  tutorName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginRight: 8,
-  },
-  tutorFlag: {
-    fontSize: 18,
-  },
-  tutorLanguage: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  tutorLevel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
-  },
-  tutorSpecialties: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  specialtyTag: {
-    backgroundColor: '#f3f4f6',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  specialtyText: {
-    fontSize: 12,
-    color: '#4b5563',
-  },
-  tutorActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 16,
   },
-  callButton: {
-    backgroundColor: '#4F46E5',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  callButtonText: {
-    color: '#fff',
+  title: {
     fontWeight: 'bold',
+  },
+  searchBar: {
+    marginBottom: 16,
+    elevation: 0,
+  },
+  filterContainer: {
+    marginBottom: 16,
+  },
+  filterButtons: {
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    marginBottom: 12,
+    fontWeight: 'bold',
+  },
+  languageList: {
+    paddingBottom: 16,
+  },
+  languageButton: {
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  languageButtonContent: {
+    paddingHorizontal: 12,
+  },
+  tutorsList: {
+    paddingBottom: 20,
+  },
+  tutorCard: {
+    marginBottom: 16,
+  },
+  unavailableTutorCard: {
+    opacity: 0.6,
+  },
+  tutorHeader: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  tutorInfo: {
+    marginLeft: 16,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  tutorName: {
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
   },
-  ratingText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+  starIcon: {
+    margin: 0,
+    padding: 0,
   },
-  backButtonContainer: {
-    marginBottom: 16,
+  divider: {
+    marginBottom: 12,
   },
-  backButton: {
+  levelText: {
+    marginBottom: 8,
+  },
+  specialtiesContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 12,
   },
-  backButtonText: {
-    marginLeft: 8,
-    fontSize: 16,
+  specialtyChip: {
+    marginRight: 8,
+    marginBottom: 8,
   },
-  callContainer: {
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  callButton: {
     flex: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#eaeaea',
+    marginHorizontal: 4,
   },
 });
 
