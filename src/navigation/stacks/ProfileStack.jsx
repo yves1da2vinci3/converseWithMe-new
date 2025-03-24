@@ -3,6 +3,7 @@ import React from 'react';
 import EditProfileScreen from '../../screens/Profile/EditProfileScreen';
 import ProfileScreen from '../../screens/Profile/ProfileScreen';
 import SettingsScreen from '../../screens/Profile/SettingsScreen';
+import StatsScreen from '../../screens/learner/StatsScreen';
 
 const ProfileStack = () => {
   const Stack = createNativeStackNavigator();
@@ -23,6 +24,11 @@ const ProfileStack = () => {
         name='settings'
         component={SettingsScreen}
         options={{ title: 'Paramètres' }}
+      />
+      <Stack.Screen
+        name='stats'
+        component={StatsScreen}
+        options={{ title: 'Statistiques' }}
       />
     </Stack.Navigator>
   );

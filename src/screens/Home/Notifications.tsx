@@ -1,144 +1,340 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import {
-  FlatList,
-  StyleSheet,
+  Avatar,
+  Chip,
+  Divider,
+  IconButton,
+  Searchbar,
+  Surface,
   Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const notificationsData = [
+// Types
+type NotificationType = 'message' | 'call' | 'achievement' | 'system';
+
+interface Notification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  avatar?: string;
+  actionable?: boolean;
+}
+
+// Données de test
+const notificationsData: Notification[] = [
   {
     id: '1',
-    title: 'Nouvel appel disponible',
-    message: 'Miguel est disponible pour un appel en espagnol',
+    type: 'message',
+    title: 'Nouveau message',
+    message: 'Sarah vous a envoyé un message',
     time: 'Il y a 5 min',
     read: false,
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    actionable: true,
   },
   {
     id: '2',
-    title: "Rappel d'exercice",
-    message: "N'oubliez pas de pratiquer votre français aujourd'hui",
-    time: 'Il y a 2h',
+    type: 'call',
+    title: 'Appel manqué',
+    message: 'Vous avez manqué un appel de Miguel',
+    time: 'Il y a 1 h',
     read: false,
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    actionable: true,
   },
   {
     id: '3',
-    title: 'Progression hebdomadaire',
-    message: 'Vous avez pratiqué 3 langues cette semaine. Excellent !',
-    time: 'Hier',
+    type: 'achievement',
+    title: 'Objectif atteint !',
+    message: 'Vous avez maintenu une séquence de 7 jours',
+    time: 'Il y a 3 h',
     read: true,
+    actionable: false,
   },
   {
     id: '4',
-    title: 'Nouvel exercice ajouté',
-    message: 'De nouveaux exercices de prononciation sont disponibles',
-    time: 'Il y a 2 jours',
+    type: 'system',
+    title: "Mise à jour de l'application",
+    message: 'Une nouvelle version est disponible',
+    time: 'Il y a 1 j',
     read: true,
+    actionable: false,
+  },
+  {
+    id: '5',
+    type: 'message',
+    title: 'Nouveau message',
+    message: 'Lucie vous a envoyé un message',
+    time: 'Il y a 2 j',
+    read: true,
+    avatar: 'https://randomuser.me/api/portraits/women/63.jpg',
+    actionable: true,
   },
 ];
 
-const Notifications = ({ navigation }) => {
+const NotificationsScreen = ({ navigation }) => {
+  const theme = useTheme();
+  const [notifications, setNotifications] =
+    useState<Notification[]>(notificationsData);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+
+  const markAsRead = (id: string) => {
+    setNotifications(
+      notifications.map((notification) =>
+        notification.id === id ? { ...notification, read: true } : notification
+      )
+    );
+  };
+
+  const markAllAsRead = () => {
+    setNotifications(
+      notifications.map((notification) => ({ ...notification, read: true }))
+    );
+  };
+
+  const deleteNotification = (id: string) => {
+    setNotifications(
+      notifications.filter((notification) => notification.id !== id)
+    );
+  };
+
+  const filteredNotifications = notifications.filter(
+    (notification) =>
+      (filter === 'all' || (filter === 'unread' && !notification.read)) &&
+      (searchQuery === '' ||
+        notification.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        notification.message.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const getIconForType = (type: NotificationType) => {
+    switch (type) {
+      case 'message':
+        return 'message-text';
+      case 'call':
+        return 'phone-missed';
+      case 'achievement':
+        return 'trophy';
+      case 'system':
+        return 'information';
+      default:
+        return 'bell';
+    }
+  };
+
+  const getIconColorForType = (type: NotificationType) => {
+    switch (type) {
+      case 'message':
+        return theme.colors.primary;
+      case 'call':
+        return '#ef4444';
+      case 'achievement':
+        return '#f59e0b';
+      case 'system':
+        return '#3b82f6';
+      default:
+        return theme.colors.primary;
+    }
+  };
+
+  const renderNotificationItem = ({ item }: { item: Notification }) => (
+    <TouchableRipple
+      onPress={() => {
+        markAsRead(item.id);
+        // Navigation vers le détail selon le type
+        if (item.actionable) {
+          if (item.type === 'message') {
+            // Navigation vers la conversation
+          } else if (item.type === 'call') {
+            // Navigation vers l'historique des appels
+          }
+        }
+      }}
+    >
+      <Surface
+        style={[
+          styles.notificationItem,
+          !item.read && { backgroundColor: theme.colors.primaryContainer },
+        ]}
+      >
+        <View style={styles.notificationHeader}>
+          <View style={styles.notificationLeft}>
+            {item.avatar ? (
+              <Avatar.Image size={48} source={{ uri: item.avatar }} />
+            ) : (
+              <Avatar.Icon
+                size={48}
+                icon={getIconForType(item.type)}
+                style={{ backgroundColor: getIconColorForType(item.type) }}
+              />
+            )}
+
+            <View style={styles.notificationContent}>
+              <Text
+                variant='titleMedium'
+                style={[
+                  styles.notificationTitle,
+                  !item.read && styles.unreadText,
+                ]}
+              >
+                {item.title}
+              </Text>
+              <Text variant='bodyMedium' style={styles.notificationMessage}>
+                {item.message}
+              </Text>
+              <Text variant='bodySmall' style={styles.notificationTime}>
+                {item.time}
+              </Text>
+            </View>
+          </View>
+
+          {!item.read && <View style={styles.unreadIndicator} />}
+
+          <IconButton
+            icon='delete'
+            size={20}
+            onPress={() => deleteNotification(item.id)}
+          />
+        </View>
+      </Surface>
+    </TouchableRipple>
+  );
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
+        <Text variant='headlineMedium' style={styles.title}>
+          Notifications
+        </Text>
+        <IconButton icon='check-all' size={24} onPress={markAllAsRead} />
+      </View>
+
+      <Searchbar
+        placeholder='Rechercher dans les notifications'
+        onChangeText={setSearchQuery}
+        value={searchQuery}
+        style={styles.searchBar}
+      />
+
+      <View style={styles.filterContainer}>
+        <Chip
+          selected={filter === 'all'}
+          onPress={() => setFilter('all')}
+          style={styles.filterChip}
         >
-          <Ionicons name='arrow-back' size={24} color='#000' />
-        </TouchableOpacity>
-        <Text style={styles.title}>Notifications</Text>
-        <View style={{ width: 24 }} />
+          Toutes
+        </Chip>
+        <Chip
+          selected={filter === 'unread'}
+          onPress={() => setFilter('unread')}
+          style={styles.filterChip}
+        >
+          Non lues
+        </Chip>
       </View>
 
       <FlatList
-        data={notificationsData}
+        data={filteredNotifications}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.notificationItem,
-              item.read ? styles.read : styles.unread,
-            ]}
-          >
-            <View style={styles.notificationContent}>
-              <Text style={styles.notificationTitle}>{item.title}</Text>
-              <Text style={styles.notificationMessage}>{item.message}</Text>
-              <Text style={styles.notificationTime}>{item.time}</Text>
-            </View>
-            {!item.read && <View style={styles.unreadIndicator} />}
+        renderItem={renderNotificationItem}
+        contentContainerStyle={styles.notificationsList}
+        ItemSeparatorComponent={() => <Divider />}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text variant='titleMedium'>Aucune notification</Text>
+            <Text variant='bodyMedium'>
+              Vous n'avez aucune notification{' '}
+              {filter === 'unread' ? 'non lue' : ''} pour le moment.
+            </Text>
           </View>
-        )}
-        contentContainerStyle={styles.listContainer}
+        }
       />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eaeaea',
-  },
-  backButton: {
-    padding: 8,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   title: {
-    fontSize: 18,
     fontWeight: 'bold',
   },
-  listContainer: {
-    padding: 16,
+  searchBar: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    elevation: 0,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  filterChip: {
+    marginRight: 8,
+  },
+  notificationsList: {
+    paddingBottom: 16,
   },
   notificationItem: {
     padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
+  },
+  notificationHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  unread: {
-    backgroundColor: '#f0f4ff',
-  },
-  read: {
-    backgroundColor: '#f5f5f5',
+  notificationLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   notificationContent: {
+    marginLeft: 16,
     flex: 1,
   },
   notificationTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
+    fontWeight: '600',
   },
   notificationMessage: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+    marginTop: 4,
   },
   notificationTime: {
-    fontSize: 12,
-    color: '#999',
+    marginTop: 8,
+    color: '#666',
+  },
+  unreadText: {
+    fontWeight: 'bold',
   },
   unreadIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: '#4F46E5',
-    marginLeft: 8,
+    marginRight: 8,
+  },
+  emptyContainer: {
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
-export default Notifications;
+export default NotificationsScreen;

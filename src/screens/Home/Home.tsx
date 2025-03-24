@@ -2,7 +2,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Avatar, Button, Card, Text, useTheme } from 'react-native-paper';
+import {
+  Avatar,
+  Button,
+  Card,
+  IconButton,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type RootStackParamList = {
@@ -19,6 +26,16 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.Navbar}>
+        <Text variant='labelLarge' style={styles.headerTitle}>
+          Bienvenue de nouveau, Yves
+        </Text>
+        <IconButton
+          icon='bell'
+          size={24}
+          onPress={() => navigation.navigate('notification')}
+        />
+      </View>
       <ScrollView>
         <View style={styles.header}>
           <Text variant='headlineMedium' style={styles.headerTitle}>
@@ -44,7 +61,7 @@ const Home = () => {
               />
               <View style={styles.cardTextContent}>
                 <Text variant='titleMedium' style={styles.cardTitle}>
-                  RolePlay Conversationnel
+                  Conversation de jeu de rôle
                 </Text>
                 <Text variant='bodyMedium' style={styles.cardDescription}>
                   Pratiquez vos compétences de conversation dans des scénarios
@@ -97,7 +114,7 @@ const Home = () => {
               />
               <View style={styles.cardTextContent}>
                 <Text variant='titleMedium' style={styles.cardTitle}>
-                  Correction de Prononciation
+                  Correction de prononciation
                 </Text>
                 <Text variant='bodyMedium' style={styles.cardDescription}>
                   Améliorez votre accent et votre prononciation avec notre outil
@@ -134,6 +151,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  Navbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    marginBottom: 8,
   },
   header: {
     padding: 16,
@@ -178,6 +202,12 @@ const styles = StyleSheet.create({
   },
   statsCard: {
     marginHorizontal: 16,
+  },
+  badge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#FF4081', // Remplacer 'theme.colors.accent' par une couleur hexadécimale
   },
 });
 

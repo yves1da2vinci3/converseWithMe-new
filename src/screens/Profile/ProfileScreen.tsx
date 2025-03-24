@@ -98,7 +98,16 @@ const ProfileScreen = ({ navigation }) => {
         </Card>
 
         <Card style={styles.section}>
-          <Card.Title title='Statistiques' />
+          <Card.Title
+            title='Statistiques'
+            right={(props) => (
+              <IconButton
+                {...props}
+                icon='chevron-right'
+                onPress={() => navigation.navigate('stats')}
+              />
+            )}
+          />
           <Card.Content>
             <View style={styles.statsContainer}>
               <Surface style={styles.statItem} elevation={0}>
@@ -131,6 +140,15 @@ const ProfileScreen = ({ navigation }) => {
                 <Text variant='bodyMedium'>Heures</Text>
               </Surface>
             </View>
+
+            <Button
+              mode='outlined'
+              icon='chart-bar'
+              onPress={() => navigation.navigate('stats')}
+              style={{ marginTop: 12 }}
+            >
+              Voir statistiques détaillées
+            </Button>
           </Card.Content>
         </Card>
 
