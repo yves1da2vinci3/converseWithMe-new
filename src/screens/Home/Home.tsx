@@ -1,103 +1,183 @@
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Avatar, Button, Card, Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-type HomeScreenProps = {
-  navigation: NativeStackNavigationProp<any, 'stats'>;
+type RootStackParamList = {
+  roleplay: undefined;
+  notification: undefined;
+  stats: undefined;
 };
 
-const Home = ({ navigation }: HomeScreenProps) => {
+type HomeNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const Home = () => {
+  const theme = useTheme();
+  const navigation = useNavigation<HomeNavigationProp>();
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Bienvenue sur ConverseWithMe</Text>
-        <Text style={styles.subtitle}>
-          Pratiquez votre langue préférée avec nos tuteurs IA
-        </Text>
-
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>5</Text>
-            <Text style={styles.statLabel}>Appels</Text>
-          </View>
-
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Heures de pratique</Text>
-          </View>
-
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>3</Text>
-            <Text style={styles.statLabel}>Langues</Text>
-          </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View style={styles.header}>
+          <Text variant='headlineMedium' style={styles.headerTitle}>
+            Bienvenue sur ConverseWithMe
+          </Text>
+          <Text variant='bodyLarge' style={styles.headerSubtitle}>
+            Améliorez vos compétences linguistiques avec nos outils interactifs
+          </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.notificationsButton}
-          onPress={() => navigation.navigate('notification')}
-        >
-          <Text style={styles.buttonText}>Voir les notifications</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.featuresContainer}>
+          <Text variant='titleLarge' style={styles.sectionTitle}>
+            Fonctionnalités
+          </Text>
+
+          <Card style={styles.card}>
+            <Card.Content style={styles.cardContent}>
+              <Avatar.Icon
+                size={50}
+                icon='account-voice'
+                style={{ backgroundColor: theme.colors.primaryContainer }}
+                color={theme.colors.primary}
+              />
+              <View style={styles.cardTextContent}>
+                <Text variant='titleMedium' style={styles.cardTitle}>
+                  RolePlay Conversationnel
+                </Text>
+                <Text variant='bodyMedium' style={styles.cardDescription}>
+                  Pratiquez vos compétences de conversation dans des scénarios
+                  de la vie réelle avec des personnages virtuels.
+                </Text>
+              </View>
+            </Card.Content>
+            <Card.Actions>
+              <Button
+                mode='contained'
+                onPress={() => navigation.navigate('roleplay')}
+              >
+                Commencer
+              </Button>
+            </Card.Actions>
+          </Card>
+
+          <Card style={styles.card}>
+            <Card.Content style={styles.cardContent}>
+              <Avatar.Icon
+                size={50}
+                icon='text-box-outline'
+                style={{ backgroundColor: theme.colors.primaryContainer }}
+                color={theme.colors.primary}
+              />
+              <View style={styles.cardTextContent}>
+                <Text variant='titleMedium' style={styles.cardTitle}>
+                  Chat avec IA
+                </Text>
+                <Text variant='bodyMedium' style={styles.cardDescription}>
+                  Discutez librement avec notre assistant IA pour pratiquer
+                  votre conversation dans différentes langues.
+                </Text>
+              </View>
+            </Card.Content>
+            <Card.Actions>
+              <Button mode='contained' onPress={() => {}}>
+                Bientôt disponible
+              </Button>
+            </Card.Actions>
+          </Card>
+
+          <Card style={styles.card}>
+            <Card.Content style={styles.cardContent}>
+              <Avatar.Icon
+                size={50}
+                icon='microphone'
+                style={{ backgroundColor: theme.colors.primaryContainer }}
+                color={theme.colors.primary}
+              />
+              <View style={styles.cardTextContent}>
+                <Text variant='titleMedium' style={styles.cardTitle}>
+                  Correction de Prononciation
+                </Text>
+                <Text variant='bodyMedium' style={styles.cardDescription}>
+                  Améliorez votre accent et votre prononciation avec notre outil
+                  d'analyse vocale.
+                </Text>
+              </View>
+            </Card.Content>
+            <Card.Actions>
+              <Button mode='contained' onPress={() => {}}>
+                Bientôt disponible
+              </Button>
+            </Card.Actions>
+          </Card>
+        </View>
+
+        <View style={styles.statsContainer}>
+          <Text variant='titleLarge' style={styles.sectionTitle}>
+            Vos statistiques
+          </Text>
+          <Card style={styles.statsCard}>
+            <Card.Content>
+              <Text variant='titleMedium'>
+                Connectez-vous pour suivre vos progrès
+              </Text>
+            </Card.Content>
+          </Card>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#FFFFFF',
   },
-  title: {
-    fontSize: 24,
+  header: {
+    padding: 16,
+    marginBottom: 8,
+  },
+  headerTitle: {
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#333',
   },
-  subtitle: {
-    fontSize: 16,
+  headerSubtitle: {
     color: '#666',
-    marginBottom: 30,
   },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30,
-  },
-  statCard: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    width: '30%',
-  },
-  statNumber: {
-    fontSize: 24,
+  sectionTitle: {
     fontWeight: 'bold',
-    color: '#4F46E5',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  featuresContainer: {
+    marginBottom: 24,
+  },
+  card: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardTextContent: {
+    marginLeft: 16,
+    flex: 1,
+  },
+  cardTitle: {
+    fontWeight: 'bold',
     marginBottom: 4,
   },
-  statLabel: {
-    fontSize: 12,
+  cardDescription: {
     color: '#666',
-    textAlign: 'center',
   },
-  notificationsButton: {
-    backgroundColor: '#4F46E5',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignItems: 'center',
+  statsContainer: {
+    marginBottom: 24,
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+  statsCard: {
+    marginHorizontal: 16,
   },
 });
 
