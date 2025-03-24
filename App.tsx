@@ -1,11 +1,4 @@
-import 'react-native-gesture-handler';
-import { StatusBar } from "expo-status-bar";
-import { PaperProvider } from "react-native-paper";
-import useConfigTheme from "./src/theme";
-import AppNavigator from "./AppNavigator";
-import { useFonts } from "expo-font";
 import {
-  Inter_900Black,
   Inter_100Thin,
   Inter_200ExtraLight,
   Inter_300Light,
@@ -14,7 +7,17 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
   Inter_800ExtraBold,
-} from "@expo-google-fonts/inter";
+  Inter_900Black,
+} from '@expo-google-fonts/inter';
+import { useFonts } from 'expo-font';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import 'react-native-gesture-handler';
+import 'react-native-get-random-values';
+import { PaperProvider } from 'react-native-paper';
+import AppNavigator from './AppNavigator';
+import { useConfigTheme } from './src/theme';
+
 export default function App() {
   const paperTheme = useConfigTheme();
   const [fontsLoaded, _] = useFonts({
@@ -35,7 +38,7 @@ export default function App() {
   return (
     <>
       <PaperProvider theme={paperTheme}>
-        <StatusBar style="auto" />
+        <StatusBar style='auto' />
         <AppNavigator />
       </PaperProvider>
     </>

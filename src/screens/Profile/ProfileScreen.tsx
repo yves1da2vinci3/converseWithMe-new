@@ -1,15 +1,20 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import {
-  ScrollView,
-  StyleSheet,
+  Avatar,
+  Button,
+  Card,
+  IconButton,
+  List,
+  Surface,
   Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileScreen = ({ navigation }) => {
+  const theme = useTheme();
+
   // Données de profil simulées
   const profileData = {
     name: 'Alex Dupont',
@@ -27,7 +32,7 @@ const ProfileScreen = ({ navigation }) => {
     },
     streak: 7,
     achievements: [
-      { id: '1', name: 'Premier appel', icon: 'call', completed: true },
+      { id: '1', name: 'Premier appel', icon: 'phone', completed: true },
       {
         id: '2',
         name: '10 jours consécutifs',
@@ -39,91 +44,145 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
+    >
       <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>{profileData.avatar}</Text>
-          </View>
-          <Text style={styles.name}>{profileData.name}</Text>
-          <Text style={styles.email}>{profileData.email}</Text>
+        <Surface style={styles.header} elevation={0}>
+          <Avatar.Text
+            size={100}
+            label={profileData.avatar}
+            color={theme.colors.onPrimary}
+            style={{ backgroundColor: theme.colors.primary }}
+          />
+          <Text variant='headlineMedium' style={styles.name}>
+            {profileData.name}
+          </Text>
+          <Text
+            variant='bodyLarge'
+            style={{ color: theme.colors.outline, marginBottom: 16 }}
+          >
+            {profileData.email}
+          </Text>
 
-          <TouchableOpacity
-            style={styles.editButton}
+          <Button
+            mode='outlined'
+            icon='account-edit'
             onPress={() => navigation.navigate('edit-profile')}
           >
-            <Text style={styles.editButtonText}>Modifier le profil</Text>
-          </TouchableOpacity>
-        </View>
+            Modifier le profil
+          </Button>
+        </Surface>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Langues</Text>
-          <View style={styles.languageList}>
+        <Card style={styles.section}>
+          <Card.Title title='Langues' />
+          <Card.Content>
             {profileData.languages.map((language, index) => (
-              <View key={index} style={styles.languageItem}>
-                <Text style={styles.languageFlag}>{language.flag}</Text>
-                <View>
-                  <Text style={styles.languageName}>{language.name}</Text>
-                  <Text style={styles.languageLevel}>{language.level}</Text>
-                </View>
-              </View>
+              <List.Item
+                key={index}
+                title={language.name}
+                description={language.level}
+                left={(props) => (
+                  <Text {...props} style={styles.languageFlag}>
+                    {language.flag}
+                  </Text>
+                )}
+                style={{
+                  backgroundColor: theme.colors.surfaceVariant,
+                  marginBottom: 8,
+                  borderRadius: 8,
+                }}
+              />
             ))}
-          </View>
-        </View>
+          </Card.Content>
+        </Card>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Statistiques</Text>
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{profileData.stats.calls}</Text>
-              <Text style={styles.statLabel}>Appels</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>
-                {profileData.stats.messages}
-              </Text>
-              <Text style={styles.statLabel}>Messages</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{profileData.stats.hours}</Text>
-              <Text style={styles.statLabel}>Heures</Text>
-            </View>
-          </View>
-        </View>
+        <Card style={styles.section}>
+          <Card.Title title='Statistiques' />
+          <Card.Content>
+            <View style={styles.statsContainer}>
+              <Surface style={styles.statItem} elevation={0}>
+                <Text
+                  variant='headlineMedium'
+                  style={{ color: theme.colors.primary }}
+                >
+                  {profileData.stats.calls}
+                </Text>
+                <Text variant='bodyMedium'>Appels</Text>
+              </Surface>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Réussites</Text>
-          {profileData.achievements.map((achievement) => (
-            <View key={achievement.id} style={styles.achievementItem}>
-              <View
-                style={[
-                  styles.achievementIcon,
-                  achievement.completed
-                    ? styles.achievementCompleted
-                    : styles.achievementIncomplete,
-                ]}
-              >
-                <Ionicons
-                  name={achievement.icon}
-                  size={24}
-                  color={achievement.completed ? '#fff' : '#4F46E5'}
-                />
-              </View>
-              <Text style={styles.achievementName}>{achievement.name}</Text>
-              {achievement.completed && (
-                <Ionicons name='checkmark-circle' size={24} color='#4F46E5' />
-              )}
-            </View>
-          ))}
-        </View>
+              <Surface style={styles.statItem} elevation={0}>
+                <Text
+                  variant='headlineMedium'
+                  style={{ color: theme.colors.primary }}
+                >
+                  {profileData.stats.messages}
+                </Text>
+                <Text variant='bodyMedium'>Messages</Text>
+              </Surface>
 
-        <TouchableOpacity
-          style={styles.settingsButton}
+              <Surface style={styles.statItem} elevation={0}>
+                <Text
+                  variant='headlineMedium'
+                  style={{ color: theme.colors.primary }}
+                >
+                  {profileData.stats.hours}
+                </Text>
+                <Text variant='bodyMedium'>Heures</Text>
+              </Surface>
+            </View>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.section}>
+          <Card.Title title='Réussites' />
+          <Card.Content>
+            {profileData.achievements.map((achievement) => (
+              <List.Item
+                key={achievement.id}
+                title={achievement.name}
+                left={(props) => (
+                  <IconButton
+                    {...props}
+                    icon={achievement.icon}
+                    mode={achievement.completed ? 'contained' : 'outlined'}
+                    iconColor={
+                      achievement.completed
+                        ? theme.colors.onPrimary
+                        : theme.colors.primary
+                    }
+                    containerColor={
+                      achievement.completed ? theme.colors.primary : undefined
+                    }
+                  />
+                )}
+                right={(props) =>
+                  achievement.completed && (
+                    <IconButton
+                      {...props}
+                      icon='check-circle'
+                      iconColor={theme.colors.primary}
+                    />
+                  )
+                }
+                style={{
+                  backgroundColor: theme.colors.surfaceVariant,
+                  marginBottom: 8,
+                  borderRadius: 8,
+                }}
+              />
+            ))}
+          </Card.Content>
+        </Card>
+
+        <Button
+          mode='contained-tonal'
+          icon='cog-outline'
           onPress={() => navigation.navigate('settings')}
+          style={styles.settingsButton}
         >
-          <Ionicons name='settings-outline' size={24} color='#4F46E5' />
-          <Text style={styles.settingsText}>Paramètres</Text>
-        </TouchableOpacity>
+          Paramètres
+        </Button>
       </ScrollView>
     </SafeAreaView>
   );
@@ -132,80 +191,26 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 30,
-  },
-  avatarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
     marginBottom: 16,
-  },
-  avatarText: {
-    fontSize: 40,
-    color: '#fff',
-    fontWeight: 'bold',
+    padding: 16,
+    borderRadius: 12,
   },
   name: {
-    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
   },
-  email: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 16,
-  },
-  editButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#4F46E5',
-    borderRadius: 20,
-  },
-  editButtonText: {
-    color: '#4F46E5',
-    fontWeight: '500',
-  },
   section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: 16,
-  },
-  languageList: {
-    gap: 12,
-  },
-  languageItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: '#f3f4f6',
-    padding: 12,
-    borderRadius: 8,
   },
   languageFlag: {
     fontSize: 24,
-  },
-  languageName: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  languageLevel: {
-    fontSize: 14,
-    color: '#666',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -213,63 +218,12 @@ const styles = StyleSheet.create({
   },
   statItem: {
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
     padding: 16,
     borderRadius: 8,
     width: '30%',
   },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4F46E5',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  achievementItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  achievementIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  achievementCompleted: {
-    backgroundColor: '#4F46E5',
-  },
-  achievementIncomplete: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#4F46E5',
-  },
-  achievementName: {
-    fontSize: 16,
-    flex: 1,
-  },
   settingsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    marginBottom: 30,
-    gap: 8,
-  },
-  settingsText: {
-    fontSize: 16,
-    color: '#4F46E5',
-    fontWeight: '500',
+    marginBottom: 24,
   },
 });
 

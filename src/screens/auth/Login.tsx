@@ -1,12 +1,7 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text, TextInput, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type LoginScreenProps = {
@@ -14,8 +9,10 @@ type LoginScreenProps = {
 };
 
 const Login = ({ navigation }: LoginScreenProps) => {
+  const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
     // Dans un cas réel, nous ferions une vérification d'authentification ici
@@ -27,47 +24,57 @@ const Login = ({ navigation }: LoginScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.container}>
-        <Text style={styles.title}>ConverseWithMe</Text>
-        <Text style={styles.subtitle}>Connectez-vous pour continuer</Text>
+        <Text variant='headlineLarge' style={styles.title}>
+          ConverseWithMe
+        </Text>
+        <Text
+          variant='titleMedium'
+          style={{ marginBottom: 30, color: theme.colors.outline }}
+        >
+          Connectez-vous pour continuer
+        </Text>
 
         <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder='Entrez votre email'
-              value={email}
-              onChangeText={setEmail}
-              keyboardType='email-address'
-              autoCapitalize='none'
-            />
-          </View>
+          <TextInput
+            label='Email'
+            mode='outlined'
+            value={email}
+            onChangeText={setEmail}
+            keyboardType='email-address'
+            autoCapitalize='none'
+            style={styles.input}
+          />
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Mot de passe</Text>
-            <TextInput
-              style={styles.input}
-              placeholder='Entrez votre mot de passe'
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          </View>
+          <TextInput
+            label='Mot de passe'
+            mode='outlined'
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            right={
+              <TextInput.Icon
+                icon={showPassword ? 'eye-off' : 'eye'}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            }
+            style={styles.input}
+          />
 
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Se connecter</Text>
-          </TouchableOpacity>
+          <Button mode='contained' onPress={handleLogin} style={styles.button}>
+            Se connecter
+          </Button>
 
-          <TouchableOpacity
-            style={styles.registerLink}
+          <Button
+            mode='text'
             onPress={() => navigation.navigate('register')}
+            style={styles.registerLink}
           >
-            <Text style={styles.registerText}>
-              Vous n'avez pas de compte ? Inscrivez-vous ici
-            </Text>
-          </TouchableOpacity>
+            Vous n'avez pas de compte ? Inscrivez-vous ici
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -77,7 +84,6 @@ const Login = ({ navigation }: LoginScreenProps) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
@@ -85,53 +91,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 28,
     fontWeight: 'bold',
-    color: '#4F46E5',
     marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 30,
   },
   form: {
     width: '100%',
   },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    fontWeight: '500',
-  },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    marginBottom: 16,
   },
   button: {
-    backgroundColor: '#4F46E5',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
     marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    paddingVertical: 6,
   },
   registerLink: {
     marginTop: 20,
-    alignItems: 'center',
-  },
-  registerText: {
-    color: '#4F46E5',
-    fontSize: 16,
   },
 });
 
