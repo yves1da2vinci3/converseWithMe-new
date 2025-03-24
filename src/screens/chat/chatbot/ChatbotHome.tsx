@@ -1,12 +1,15 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import {
-  FlatList,
-  StyleSheet,
+  Avatar,
+  Divider,
+  IconButton,
+  List,
+  Surface,
   Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const botData = [
@@ -48,48 +51,82 @@ const botData = [
 ];
 
 const ChatbotHome = ({ navigation }) => {
+  const theme = useTheme();
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <Surface style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
+          <IconButton
+            icon='arrow-left'
+            size={24}
             onPress={() => navigation.goBack()}
-          >
-            <Ionicons name='arrow-back' size={24} color='#000' />
-          </TouchableOpacity>
-          <Text style={styles.title}>Assistants IA</Text>
+          />
+          <Text variant='titleMedium' style={styles.title}>
+            Assistants IA
+          </Text>
           <View style={{ width: 24 }} />
         </View>
+
+        <Divider />
 
         <FlatList
           data={botData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.botCard}
+            <TouchableRipple
               onPress={() => navigation.navigate('botchatRoom', { bot: item })}
             >
-              <View style={styles.avatarContainer}>
-                <Text style={styles.avatarText}>{item.avatar}</Text>
-              </View>
-              <View style={styles.botInfo}>
-                <View style={styles.nameRow}>
-                  <Text style={styles.botName}>{item.name}</Text>
-                  <Text style={styles.language}>{item.language}</Text>
-                </View>
-                <Text style={styles.description} numberOfLines={2}>
-                  {item.description}
-                </Text>
-                <Text style={styles.lastMessage} numberOfLines={1}>
-                  {item.lastMessage}
-                </Text>
-              </View>
-            </TouchableOpacity>
+              <List.Item
+                title={
+                  <View style={styles.nameRow}>
+                    <Text variant='titleMedium' style={styles.botName}>
+                      {item.name}
+                    </Text>
+                    <Text
+                      variant='labelLarge'
+                      style={[styles.language, { color: theme.colors.primary }]}
+                    >
+                      {item.language}
+                    </Text>
+                  </View>
+                }
+                description={() => (
+                  <View>
+                    <Text
+                      variant='bodyMedium'
+                      style={styles.description}
+                      numberOfLines={2}
+                    >
+                      {item.description}
+                    </Text>
+                    <Text
+                      variant='bodySmall'
+                      style={styles.lastMessage}
+                      numberOfLines={1}
+                    >
+                      {item.lastMessage}
+                    </Text>
+                  </View>
+                )}
+                left={(props) => (
+                  <Avatar.Text
+                    size={50}
+                    label={item.avatar}
+                    color='white'
+                    style={[
+                      props.style,
+                      { backgroundColor: theme.colors.primary },
+                    ]}
+                  />
+                )}
+                style={styles.botCard}
+              />
+            </TouchableRipple>
           )}
           contentContainerStyle={styles.listContainer}
         />
-      </View>
+      </Surface>
     </SafeAreaView>
   );
 };
@@ -97,7 +134,6 @@ const ChatbotHome = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
@@ -106,66 +142,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eaeaea',
-  },
-  backButton: {
-    padding: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   title: {
-    fontSize: 18,
     fontWeight: 'bold',
   },
   listContainer: {
-    padding: 16,
+    padding: 0,
   },
   botCard: {
-    flexDirection: 'row',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eaeaea',
-    alignItems: 'center',
-  },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  avatarText: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  botInfo: {
-    flex: 1,
+    paddingVertical: 8,
   },
   nameRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 4,
+    width: '100%',
   },
   botName: {
-    fontSize: 16,
     fontWeight: 'bold',
   },
   language: {
-    fontSize: 14,
-    color: '#4F46E5',
+    fontWeight: '600',
   },
   description: {
-    fontSize: 14,
     color: '#666',
     marginBottom: 4,
   },
   lastMessage: {
-    fontSize: 14,
     color: '#999',
     fontStyle: 'italic',
   },

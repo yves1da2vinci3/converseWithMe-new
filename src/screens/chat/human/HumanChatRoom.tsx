@@ -1,15 +1,18 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+} from 'react-native';
+import {
+  Avatar,
+  IconButton,
+  Surface,
   Text,
   TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Message = {
@@ -20,6 +23,7 @@ type Message = {
 };
 
 const HumanChatRoom = ({ route, navigation }) => {
+  const theme = useTheme();
   const { contact } = route.params;
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -48,12 +52,15 @@ const HumanChatRoom = ({ route, navigation }) => {
     navigation.setOptions({
       title: contact.name,
       headerRight: () => (
-        <View style={styles.avatarContainer}>
-          <Text style={styles.avatarText}>{contact.avatar}</Text>
-        </View>
+        <Avatar.Text
+          size={32}
+          label={contact.avatar}
+          color='white'
+          style={{ backgroundColor: theme.colors.primary, marginRight: 10 }}
+        />
       ),
     });
-  }, [navigation, contact]);
+  }, [navigation, contact, theme.colors.primary]);
 
   const handleSendMessage = () => {
     if (inputText.trim() === '') return;
@@ -87,11 +94,17 @@ const HumanChatRoom = ({ route, navigation }) => {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View
+            <Surface
               style={[
                 styles.messageBubble,
-                item.isUser ? styles.userMessage : styles.contactMessage,
+                item.isUser
+                  ? [
+                      styles.userMessage,
+                      { backgroundColor: theme.colors.primary },
+                    ]
+                  : styles.botMessage,
               ]}
+              elevation={1}
             >
               <Text
                 style={
@@ -101,30 +114,39 @@ const HumanChatRoom = ({ route, navigation }) => {
                 {item.text}
               </Text>
               <Text
+                variant='labelSmall'
                 style={item.isUser ? styles.timestampUser : styles.timestamp}
               >
                 {formatTime(item.timestamp)}
               </Text>
-            </View>
+            </Surface>
           )}
           contentContainerStyle={styles.messageList}
+          inverted={false}
         />
 
-        <View style={styles.inputContainer}>
+        <Surface style={styles.inputContainer} elevation={4}>
           <TextInput
             style={styles.input}
             placeholder='Écrivez votre message...'
             value={inputText}
             onChangeText={setInputText}
             multiline
+            mode='outlined'
+            outlineStyle={{ borderRadius: 20 }}
+            dense
           />
-          <TouchableOpacity
-            style={styles.sendButton}
+          <IconButton
+            icon='send'
+            size={24}
+            iconColor='white'
+            style={[
+              styles.sendButton,
+              { backgroundColor: theme.colors.primary },
+            ]}
             onPress={handleSendMessage}
-          >
-            <Ionicons name='send' size={24} color='#fff' />
-          </TouchableOpacity>
-        </View>
+          />
+        </Surface>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -133,27 +155,13 @@ const HumanChatRoom = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f7fa',
   },
   container: {
     flex: 1,
   },
-  avatarContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  avatarText: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
   messageList: {
     padding: 16,
+    paddingBottom: 16,
   },
   messageBubble: {
     padding: 12,
@@ -162,11 +170,10 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   userMessage: {
-    backgroundColor: '#4F46E5',
     alignSelf: 'flex-end',
     borderBottomRightRadius: 4,
   },
-  contactMessage: {
+  botMessage: {
     backgroundColor: '#e2e8f0',
     alignSelf: 'flex-start',
     borderBottomLeftRadius: 4,
@@ -180,13 +187,11 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   timestamp: {
-    fontSize: 12,
     color: '#666',
     alignSelf: 'flex-end',
     marginTop: 4,
   },
   timestampUser: {
-    fontSize: 12,
     color: 'rgba(255, 255, 255, 0.7)',
     alignSelf: 'flex-end',
     marginTop: 4,
@@ -194,26 +199,14 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     padding: 12,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
     alignItems: 'center',
   },
   input: {
     flex: 1,
-    backgroundColor: '#f1f5f9',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: 'transparent',
     maxHeight: 100,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
     marginLeft: 8,
   },
 });

@@ -1,40 +1,69 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Card, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ChatHome = ({ navigation }) => {
+  const theme = useTheme();
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.title}>Conversations</Text>
+        <Text variant='headlineMedium' style={styles.title}>
+          Conversations
+        </Text>
 
         <View style={styles.cardsContainer}>
-          <TouchableOpacity
-            style={styles.card}
+          <TouchableRipple
             onPress={() => navigation.navigate('chatbotHome')}
+            borderless
+            style={styles.ripple}
           >
-            <View style={styles.iconContainer}>
-              <Ionicons name='chatbubble-ellipses' size={40} color='#4F46E5' />
-            </View>
-            <Text style={styles.cardTitle}>Discuter avec un IA</Text>
-            <Text style={styles.cardDescription}>
-              Pratiquez avec nos assistants IA pour améliorer votre vocabulaire
-            </Text>
-          </TouchableOpacity>
+            <Card style={styles.card}>
+              <Card.Content>
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name='chatbubble-ellipses'
+                    size={40}
+                    color={theme.colors.primary}
+                  />
+                </View>
+                <Text variant='titleMedium' style={styles.cardTitle}>
+                  Discuter avec un IA
+                </Text>
+                <Text variant='bodyMedium' style={styles.cardDescription}>
+                  Pratiquez avec nos assistants IA pour améliorer votre
+                  vocabulaire
+                </Text>
+              </Card.Content>
+            </Card>
+          </TouchableRipple>
 
-          <TouchableOpacity
-            style={styles.card}
+          <TouchableRipple
             onPress={() => navigation.navigate('chathumanHome')}
+            borderless
+            style={styles.ripple}
           >
-            <View style={styles.iconContainer}>
-              <Ionicons name='people' size={40} color='#4F46E5' />
-            </View>
-            <Text style={styles.cardTitle}>Discuter avec des apprenants</Text>
-            <Text style={styles.cardDescription}>
-              Connectez-vous avec d'autres apprenants pour progresser ensemble
-            </Text>
-          </TouchableOpacity>
+            <Card style={styles.card}>
+              <Card.Content>
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name='people'
+                    size={40}
+                    color={theme.colors.primary}
+                  />
+                </View>
+                <Text variant='titleMedium' style={styles.cardTitle}>
+                  Discuter avec des apprenants
+                </Text>
+                <Text variant='bodyMedium' style={styles.cardDescription}>
+                  Connectez-vous avec d'autres apprenants pour progresser
+                  ensemble
+                </Text>
+              </Card.Content>
+            </Card>
+          </TouchableRipple>
         </View>
       </View>
     </SafeAreaView>
@@ -44,37 +73,32 @@ const ChatHome = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
     padding: 20,
   },
   title: {
-    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 24,
   },
   cardsContainer: {
     gap: 20,
   },
-  card: {
-    backgroundColor: '#f3f4f6',
+  ripple: {
     borderRadius: 12,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+  },
+  card: {
+    borderRadius: 12,
   },
   iconContainer: {
     marginBottom: 16,
   },
   cardTitle: {
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   cardDescription: {
-    fontSize: 14,
     color: '#666',
     lineHeight: 20,
   },

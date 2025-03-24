@@ -1,12 +1,15 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
 import {
-  FlatList,
-  StyleSheet,
+  Avatar,
+  Badge,
+  Divider,
+  List,
+  Surface,
   Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Données simulées de conversations
@@ -50,46 +53,69 @@ const chatData = [
 ];
 
 const ChatHumanHome = ({ navigation }) => {
+  const theme = useTheme();
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <Surface style={styles.container}>
         <FlatList
           data={chatData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.chatItem}
+            <TouchableRipple
               onPress={() =>
                 navigation.navigate('humanchatRoom', { contact: item })
               }
             >
-              <View style={styles.avatarContainer}>
-                <Text style={styles.avatarText}>{item.avatar}</Text>
-              </View>
-              <View style={styles.chatInfo}>
-                <View style={styles.chatHeader}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.time}>{item.time}</Text>
-                </View>
-                <View style={styles.chatFooter}>
-                  <Text style={styles.lastMessage} numberOfLines={1}>
-                    {item.lastMessage}
-                  </Text>
-                  {item.unread > 0 && (
-                    <View style={styles.unreadBadge}>
-                      <Text style={styles.unreadText}>{item.unread}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
+              <List.Item
+                title={
+                  <View style={styles.chatHeader}>
+                    <Text variant='titleMedium' style={styles.name}>
+                      {item.name}
+                    </Text>
+                    <Text variant='bodySmall' style={styles.time}>
+                      {item.time}
+                    </Text>
+                  </View>
+                }
+                description={() => (
+                  <View style={styles.chatFooter}>
+                    <Text
+                      variant='bodyMedium'
+                      style={styles.lastMessage}
+                      numberOfLines={1}
+                    >
+                      {item.lastMessage}
+                    </Text>
+                    {item.unread > 0 && (
+                      <Badge
+                        size={22}
+                        style={{ backgroundColor: theme.colors.primary }}
+                      >
+                        {item.unread}
+                      </Badge>
+                    )}
+                  </View>
+                )}
+                left={(props) => (
+                  <Avatar.Text
+                    size={50}
+                    label={item.avatar}
+                    color='white'
+                    style={[
+                      props.style,
+                      { backgroundColor: theme.colors.primary },
+                    ]}
+                  />
+                )}
+                style={styles.chatItem}
+              />
+            </TouchableRipple>
           )}
+          ItemSeparatorComponent={() => <Divider />}
+          contentContainerStyle={styles.listContainer}
         />
-
-        <TouchableOpacity style={styles.fab}>
-          <Ionicons name='chatbubble-ellipses' size={24} color='#fff' />
-        </TouchableOpacity>
-      </View>
+      </Surface>
     </SafeAreaView>
   );
 };
@@ -97,86 +123,39 @@ const ChatHumanHome = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
   },
+  listContainer: {
+    flexGrow: 1,
+  },
   chatItem: {
-    flexDirection: 'row',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eaeaea',
-  },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  chatInfo: {
-    flex: 1,
+    padding: 12,
   },
   chatHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
+    width: '100%',
   },
   name: {
-    fontSize: 16,
     fontWeight: 'bold',
   },
   time: {
-    fontSize: 12,
     color: '#666',
   },
   chatFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
   },
   lastMessage: {
-    fontSize: 14,
     color: '#666',
     flex: 1,
     marginRight: 8,
-  },
-  unreadBadge: {
-    backgroundColor: '#4F46E5',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  unreadText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#4F46E5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
 });
 
