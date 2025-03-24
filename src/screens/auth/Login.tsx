@@ -47,6 +47,9 @@ const Login = ({ navigation }: LoginScreenProps) => {
             keyboardType='email-address'
             autoCapitalize='none'
             style={styles.input}
+            contentStyle={styles.inputContent}
+            outlineStyle={{ borderRadius: 8 }}
+            left={<TextInput.Icon icon='email' />}
           />
 
           <TextInput
@@ -55,13 +58,16 @@ const Login = ({ navigation }: LoginScreenProps) => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
+            style={styles.input}
+            contentStyle={styles.inputContent}
+            outlineStyle={{ borderRadius: 8 }}
+            left={<TextInput.Icon icon='lock' />}
             right={
               <TextInput.Icon
                 icon={showPassword ? 'eye-off' : 'eye'}
                 onPress={() => setShowPassword(!showPassword)}
               />
             }
-            style={styles.input}
           />
 
           <Button mode='contained' onPress={handleLogin} style={styles.button}>
@@ -99,6 +105,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 16,
+    backgroundColor: 'transparent',
+  },
+  inputContent: {
+    paddingVertical: 10,
+    textAlignVertical: 'center',
   },
   button: {
     marginTop: 10,

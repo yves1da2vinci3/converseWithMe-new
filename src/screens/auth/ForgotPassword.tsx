@@ -92,15 +92,17 @@ const ForgotPassword = () => {
           {!isSubmitted ? (
             <View style={styles.formContainer}>
               <TextInput
+                style={styles.input}
+                mode='outlined'
                 label='Email'
                 value={email}
                 onChangeText={setEmail}
-                style={styles.input}
-                mode='outlined'
                 keyboardType='email-address'
                 autoCapitalize='none'
                 error={!!emailError}
                 left={<TextInput.Icon icon='email' />}
+                contentStyle={styles.inputContent}
+                outlineStyle={{ borderRadius: 8 }}
               />
               {emailError ? (
                 <HelperText type='error' visible={!!emailError}>
@@ -201,6 +203,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 16,
+    backgroundColor: 'transparent',
+  },
+  inputContent: {
+    paddingVertical: 10,
+    textAlignVertical: 'center',
   },
   button: {
     marginTop: 16,

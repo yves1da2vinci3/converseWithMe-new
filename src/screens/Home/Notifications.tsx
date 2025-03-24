@@ -280,31 +280,39 @@ const styles = StyleSheet.create({
   searchBar: {
     marginHorizontal: 16,
     marginBottom: 16,
-    elevation: 0,
+    elevation: 2,
+    borderRadius: 8,
   },
   filterContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     marginBottom: 16,
+    flexWrap: 'wrap',
   },
   filterChip: {
     marginRight: 8,
+    marginBottom: 8,
   },
   notificationsList: {
     paddingBottom: 16,
   },
   notificationItem: {
     padding: 16,
+    elevation: 1,
+    marginHorizontal: 8,
+    marginVertical: 4,
+    borderRadius: 8,
   },
   notificationHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   notificationLeft: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1,
+    flexWrap: 'wrap',
   },
   notificationContent: {
     marginLeft: 16,

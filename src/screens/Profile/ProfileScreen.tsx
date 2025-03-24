@@ -1,5 +1,10 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import {
   Avatar,
   Button,
@@ -14,6 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileScreen = ({ navigation }) => {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
 
   // Données de profil simulées
   const profileData = {
@@ -48,9 +54,9 @@ const ProfileScreen = ({ navigation }) => {
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
     >
       <ScrollView style={styles.container}>
-        <Surface style={styles.header} elevation={0}>
+        <Surface style={styles.header} elevation={2}>
           <Avatar.Text
-            size={100}
+            size={width < 400 ? 80 : 100}
             label={profileData.avatar}
             color={theme.colors.onPrimary}
             style={{ backgroundColor: theme.colors.primary }}
@@ -69,6 +75,7 @@ const ProfileScreen = ({ navigation }) => {
             mode='outlined'
             icon='account-edit'
             onPress={() => navigation.navigate('edit-profile')}
+            style={styles.editButton}
           >
             Modifier le profil
           </Button>
@@ -109,8 +116,16 @@ const ProfileScreen = ({ navigation }) => {
             )}
           />
           <Card.Content>
-            <View style={styles.statsContainer}>
-              <Surface style={styles.statItem} elevation={0}>
+            <View
+              style={[
+                styles.statsContainer,
+                width < 500 && styles.statsContainerWrapped,
+              ]}
+            >
+              <Surface
+                style={[styles.statItem, width < 500 && styles.statItemWrapped]}
+                elevation={2}
+              >
                 <Text
                   variant='headlineMedium'
                   style={{ color: theme.colors.primary }}
@@ -120,7 +135,10 @@ const ProfileScreen = ({ navigation }) => {
                 <Text variant='bodyMedium'>Appels</Text>
               </Surface>
 
-              <Surface style={styles.statItem} elevation={0}>
+              <Surface
+                style={[styles.statItem, width < 500 && styles.statItemWrapped]}
+                elevation={2}
+              >
                 <Text
                   variant='headlineMedium'
                   style={{ color: theme.colors.primary }}
@@ -130,7 +148,10 @@ const ProfileScreen = ({ navigation }) => {
                 <Text variant='bodyMedium'>Messages</Text>
               </Surface>
 
-              <Surface style={styles.statItem} elevation={0}>
+              <Surface
+                style={[styles.statItem, width < 500 && styles.statItemWrapped]}
+                elevation={2}
+              >
                 <Text
                   variant='headlineMedium'
                   style={{ color: theme.colors.primary }}
@@ -223,9 +244,12 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: 'bold',
     marginBottom: 4,
+    textAlign: 'center',
   },
   section: {
     marginBottom: 16,
+    borderRadius: 8,
+    elevation: 2,
   },
   languageFlag: {
     fontSize: 24,
@@ -234,14 +258,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  statsContainerWrapped: {
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 16,
+  },
   statItem: {
     alignItems: 'center',
     padding: 16,
     borderRadius: 8,
     width: '30%',
   },
+  statItemWrapped: {
+    width: '45%',
+    marginBottom: 8,
+  },
   settingsButton: {
     marginBottom: 24,
+    borderRadius: 8,
+  },
+  editButton: {
+    borderRadius: 8,
+    paddingHorizontal: 8,
   },
 });
 

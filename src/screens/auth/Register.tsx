@@ -142,6 +142,8 @@ const Register = () => {
               mode='outlined'
               error={!!errors.fullName}
               left={<TextInput.Icon icon='account' />}
+              contentStyle={styles.inputContent}
+              outlineStyle={{ borderRadius: 8 }}
             />
             {errors.fullName ? (
               <HelperText type='error' visible={!!errors.fullName}>
@@ -159,6 +161,8 @@ const Register = () => {
               autoCapitalize='none'
               error={!!errors.email}
               left={<TextInput.Icon icon='email' />}
+              contentStyle={styles.inputContent}
+              outlineStyle={{ borderRadius: 8 }}
             />
             {errors.email ? (
               <HelperText type='error' visible={!!errors.email}>
@@ -188,6 +192,8 @@ const Register = () => {
                   }
                 />
               }
+              contentStyle={styles.inputContent}
+              outlineStyle={{ borderRadius: 8 }}
             />
             {errors.password ? (
               <HelperText type='error' visible={!!errors.password}>
@@ -217,6 +223,8 @@ const Register = () => {
                   }
                 />
               }
+              contentStyle={styles.inputContent}
+              outlineStyle={{ borderRadius: 8 }}
             />
             {errors.confirmPassword ? (
               <HelperText type='error' visible={!!errors.confirmPassword}>
@@ -294,7 +302,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   input: {
-    marginBottom: 8,
+    marginBottom: 16,
+    backgroundColor: 'transparent',
+  },
+  inputContent: {
+    paddingVertical: 10,
+    textAlignVertical: 'center',
   },
   checkboxContainer: {
     flexDirection: 'row',

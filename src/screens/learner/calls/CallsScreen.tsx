@@ -278,7 +278,7 @@ const CallsScreen = ({ navigation }: CallsScreenProps) => {
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.languageList}
+            contentContainerStyle={styles.languageScrollView}
           />
 
           <Text variant='titleMedium' style={styles.sectionTitle}>
@@ -317,25 +317,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchBar: {
-    marginBottom: 16,
-    elevation: 0,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    elevation: 2,
   },
   filterContainer: {
     marginBottom: 16,
   },
   filterButtons: {
-    marginBottom: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 8,
+    justifyContent: 'center',
   },
   sectionTitle: {
     marginBottom: 12,
     fontWeight: 'bold',
   },
-  languageList: {
-    paddingBottom: 16,
+  languageScrollView: {
+    paddingHorizontal: 8,
   },
   languageButton: {
-    marginRight: 8,
-    marginBottom: 8,
+    marginHorizontal: 4,
+    marginVertical: 8,
   },
   languageButtonContent: {
     paddingHorizontal: 12,
@@ -345,6 +349,7 @@ const styles = StyleSheet.create({
   },
   tutorCard: {
     marginBottom: 16,
+    width: '100%',
   },
   unavailableTutorCard: {
     opacity: 0.6,
@@ -388,10 +393,13 @@ const styles = StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    marginTop: 16,
   },
   callButton: {
     flex: 1,
     marginHorizontal: 4,
+    minWidth: 100,
   },
 });
 

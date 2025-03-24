@@ -57,6 +57,9 @@ const EditProfileScreen = ({ navigation }) => {
             value={name}
             onChangeText={setName}
             style={styles.input}
+            contentStyle={styles.inputContent}
+            outlineStyle={{ borderRadius: 8 }}
+            left={<TextInput.Icon icon='account' />}
           />
         </View>
 
@@ -71,6 +74,9 @@ const EditProfileScreen = ({ navigation }) => {
             keyboardType='email-address'
             autoCapitalize='none'
             style={styles.input}
+            contentStyle={styles.inputContent}
+            outlineStyle={{ borderRadius: 8 }}
+            left={<TextInput.Icon icon='email' />}
           />
         </View>
 
@@ -185,7 +191,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
+    marginBottom: 12,
     backgroundColor: 'transparent',
+  },
+  inputContent: {
+    paddingVertical: 10,
+    textAlignVertical: 'center',
   },
   sectionTitle: {
     fontWeight: 'bold',

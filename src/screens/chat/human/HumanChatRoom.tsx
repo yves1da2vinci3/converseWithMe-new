@@ -134,6 +134,7 @@ const HumanChatRoom = ({ route, navigation }) => {
             multiline
             mode='outlined'
             outlineStyle={{ borderRadius: 20 }}
+            contentStyle={styles.inputContent}
             dense
           />
           <IconButton
@@ -205,6 +206,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     maxHeight: 100,
+  },
+  inputContent: {
+    paddingVertical: 8,
+    textAlignVertical: 'center',
   },
   sendButton: {
     marginLeft: 8,

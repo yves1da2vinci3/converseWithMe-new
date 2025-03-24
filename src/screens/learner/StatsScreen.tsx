@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import {
   Avatar,
   Button,
@@ -53,6 +59,15 @@ const monthlyProgressData = [
 const StatsScreen = () => {
   const theme = useTheme();
   const [timeRange, setTimeRange] = useState('week');
+  const { width } = useWindowDimensions();
+  const [chartWidth, setChartWidth] = useState(
+    Dimensions.get('window').width - 40
+  );
+
+  // Mettre à jour la largeur du graphique lorsque la taille de l'écran change
+  useEffect(() => {
+    setChartWidth(width - 40);
+  }, [width]);
 
   // Données statistiques clés
   const stats = {
@@ -187,8 +202,13 @@ const StatsScreen = () => {
           </Card.Content>
         </Card>
 
-        <View style={styles.chartRow}>
-          <Card style={[styles.chartCard, styles.halfChart]}>
+        <View style={[styles.chartRow, width < 600 && styles.chartColumn]}>
+          <Card
+            style={[
+              styles.chartCard,
+              width >= 600 ? styles.halfChart : styles.fullChart,
+            ]}
+          >
             <Card.Title
               title='Répartition des activités'
               titleVariant='titleMedium'
@@ -239,7 +259,12 @@ const StatsScreen = () => {
             </Card.Content>
           </Card>
 
-          <Card style={[styles.chartCard, styles.halfChart]}>
+          <Card
+            style={[
+              styles.chartCard,
+              width >= 600 ? styles.halfChart : styles.fullChart,
+            ]}
+          >
             <Card.Title
               title='Progression mensuelle'
               titleVariant='titleMedium'
@@ -275,7 +300,7 @@ const StatsScreen = () => {
                                 }deg`,
                               },
                             ],
-                            width: screenWidth / 10,
+                            width: chartWidth / 10,
                             backgroundColor: theme.colors.primary,
                           },
                         ]}
@@ -353,6 +378,8 @@ const styles = StyleSheet.create({
   },
   keyStatsCard: {
     marginBottom: 16,
+    elevation: 2,
+    borderRadius: 8,
   },
   keyStatsContainer: {
     flexDirection: 'row',
@@ -363,12 +390,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '48%',
     marginBottom: 16,
+    padding: 8,
   },
   segmentedButtons: {
     marginBottom: 16,
   },
   chartCard: {
     marginBottom: 16,
+    elevation: 2,
+    borderRadius: 8,
   },
   chartDescription: {
     marginBottom: 8,
@@ -489,11 +519,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  chartColumn: {
+    flexDirection: 'column',
+  },
   halfChart: {
     width: '48%',
   },
+  fullChart: {
+    width: '100%',
+  },
   recommendationsCard: {
     marginBottom: 16,
+    elevation: 2,
+    borderRadius: 8,
   },
   recommendationText: {
     marginBottom: 16,
@@ -501,9 +539,12 @@ const styles = StyleSheet.create({
   recommendation: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    paddingVertical: 4,
   },
   exportButton: {
     marginTop: 8,
+    borderRadius: 8,
   },
 });
 

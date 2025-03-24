@@ -164,14 +164,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               />
             }
             disabled={isProcessing}
+            contentStyle={styles.inputContent}
+            outlineStyle={{ borderRadius: 20 }}
           />
           <IconButton
             icon='send'
             mode='contained'
             size={24}
             onPress={handleSendMessage}
-            disabled={!inputValue.trim() || isProcessing}
             style={styles.sendButton}
+            disabled={inputValue.trim() === '' || isProcessing}
           />
         </View>
         {isProcessing && (
@@ -237,10 +239,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     alignItems: 'flex-end',
+    paddingHorizontal: 16,
   },
   input: {
     flex: 1,
     maxHeight: 120,
+    backgroundColor: 'transparent',
+  },
+  inputContent: {
+    paddingVertical: 8,
+    textAlignVertical: 'center',
   },
   sendButton: {
     marginLeft: 8,

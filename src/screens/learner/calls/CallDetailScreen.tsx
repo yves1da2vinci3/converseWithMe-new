@@ -317,7 +317,7 @@ const CallDetailScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -330,12 +330,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   tutorCard: {
-    margin: 16,
-    marginTop: 8,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    elevation: 2,
   },
   tutorHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
+    flexWrap: 'wrap',
   },
   avatar: {
     marginRight: 16,
@@ -371,11 +374,11 @@ const styles = StyleSheet.create({
   specialtiesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 8,
+    marginBottom: 16,
   },
   specialtyChip: {
-    marginRight: 8,
-    marginBottom: 8,
+    margin: 4,
+    height: 30,
   },
   tabsContainer: {
     flexDirection: 'row',
@@ -409,8 +412,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   slotChip: {
-    marginRight: 8,
-    marginBottom: 8,
+    margin: 4,
+    height: 36,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -426,6 +429,17 @@ const styles = StyleSheet.create({
   },
   buttonContent: {
     paddingVertical: 8,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 16,
+    flexWrap: 'wrap',
+  },
+  actionButton: {
+    flex: 1,
+    marginHorizontal: 8,
+    minWidth: 120,
   },
 });
 
